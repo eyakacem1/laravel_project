@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class parametre extends Model
 {
+  protected $table = 'parametre'; // Specify the correct table name
+
     protected $fillable = [
        'compteur',
        'id',

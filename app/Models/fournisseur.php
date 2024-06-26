@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class fournisseur extends Model
 {
+    protected $table = 'fournisseur'; // Specify the correct table name
     protected $fillable = [
        'adresse',
        'email',
@@ -19,6 +20,10 @@ class fournisseur extends Model
        'type'
 
     ];
+    public function parametre()
+    {
+        return $this->belongsTo(Parametre::class);
+    }
 
    
     use HasFactory;

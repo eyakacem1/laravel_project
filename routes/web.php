@@ -3,6 +3,8 @@
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\FournisseurResourceController;
+
 use App\Http\Controllers\web\WebLoginController;
 use App\Http\Controllers\admin\ProductController;
 use App\Http\Controllers\HomeController;
@@ -30,7 +32,7 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/AdminProduit', [ProductController::class, 'index'])->name('admin.produit');
-    Route::get('/AdminDashboard', [WebLoginController::class, 'index'])->name('web.index');
+    Route::get('/AdminDashboard', [WebLoginController::class, 'index'])->name('AdminDashboard');
     Route::post('/produit', [ProductController::class, 'store'])->name('admin.produit.store');
     Route::get('/produit/create', [ProductController::class, 'create'])->name('produit.create');
 
@@ -42,6 +44,14 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/produit/{id}/edit', [ProductController::class, 'edit'])->name('admin.produit.edit');
     Route::put('/produit/{id}', [ProductController::class, 'update'])->name('admin.produit.update');
     Route::delete('/produit/{id}', [ProductController::class, 'destroy'])->name('produit.destroy');
+    
+    Route::get('/fournisseur', [FournisseurResourceController::class, 'index'])->name('admin.fournisseur');
+    Route::get('/fournisseur/create', [FournisseurResourceController::class, 'create'])->name('admin.fournisseur.create');
+    Route::post('/fournisseur', [FournisseurResourceController::class, 'store'])->name('admin.fournisseur.store');
+    Route::get('/fournisseur/{id}/edit', [FournisseurResourceController::class, 'edit'])->name('admin.fournisseur.edit');
+    Route::put('/fournisseur/{id}', [FournisseurResourceController::class, 'update'])->name('admin.fournisseur.update');
+    Route::delete('/fournisseur/{id}', [FournisseurResourceController::class, 'destroy'])->name('admin.fournisseur.destroy');
+
     // Route::get('/dashboard', function () {
     //     return view('dashboard');
     // })->name('dashboard');

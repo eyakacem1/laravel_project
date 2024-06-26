@@ -31,6 +31,10 @@
 					
 								
 				</ul>
+				<ul aria-expanded="false">
+					<li><a href="{{ route('admin.fournisseur') }}">Fournisseurs</a></li>
+				
+				</ul>
             </li>
 			{{-- <li class="nav-label">Apps</li> --}}
            
