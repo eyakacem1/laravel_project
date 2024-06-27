@@ -17,7 +17,8 @@ class FournisseurResourceController extends Controller
     public function index()
     {
         $fournisseur = Fournisseur::all();
-        return view('admin.fournisseur.index', compact('fournisseur'));
+        return view('admin.fournisseur', compact('fournisseur'));
+
         //
     }
 
@@ -35,30 +36,36 @@ class FournisseurResourceController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'adresse' => 'required|string',
-            'email' => 'required|email',
-            'formeJuridique' => 'required|string',
-            'matriculeFiscale' => 'required|string',
-            'nom' => 'required|string',
-            'phone' => 'required|string',
-            'raisonSociale' => 'required|string',
-            'type' => 'required|string',
-        ]);
+        // Validate the form inputs and store the validated data in $validatedData
+    $validatedData = $request->validate([
+        'table_name' => 'required|string',
+        'adresse' => 'required|string',
+        'email' => 'required|email',
+        'formeJuridique' => 'required|string',
+        'matriculeFiscale' => 'required|string',
+        'nom' => 'required|string',
+        'phone' => 'required|string',
+        'raisonSociale' => 'required|string',
+        'type' => 'required|string',
+    ]);
 
-        $id = $this->generate_code();
+    // Fetch the table name from the validated data
+    $tableName = $validatedData['table_name'];
+    // Generate the code based on the table name
+    $code = $this->generate_code($tableName);
 
-        $fournisseur = new Fournisseur();
-        $fournisseur->id = $id;
-        $fournisseur->adresse = $request->adresse;
-        $fournisseur->email = $request->email;
-        $fournisseur->formeJuridique = $request->formeJuridique;
-        $fournisseur->matriculeFiscale = $request->matriculeFiscale;
-        $fournisseur->nom = $request->nom;
-        $fournisseur->phone = $request->phone;
-        $fournisseur->raisonSociale = $request->raisonSociale;
-        $fournisseur->type = $request->type;
-        $fournisseur->save();
+    // Create a new Fournisseur instance and fill it with the validated data
+    $fournisseur = new Fournisseur();
+    $fournisseur->code = $code;
+    $fournisseur->adresse = $validatedData['adresse'];
+    $fournisseur->email = $validatedData['email'];
+    $fournisseur->formeJuridique = $validatedData['formeJuridique'];
+    $fournisseur->matriculeFiscale = $validatedData['matriculeFiscale'];
+    $fournisseur->nom = $validatedData['nom'];
+    $fournisseur->phone = $validatedData['phone'];
+    $fournisseur->raisonSociale = $validatedData['raisonSociale'];
+    $fournisseur->type = $validatedData['type'];
+    $fournisseur->save();
 
         return redirect()->route('admin.fournisseur.create')->with('success', 'Fournisseur ajouté avec succès.');
     }
@@ -75,22 +82,50 @@ class FournisseurResourceController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
-    {
-        return view('admin.fournisseur.edit', compact('fournisseur'));
+    {  $fournisseur = Fournisseur::findOrFail($id);
+        return view('admin.updateFournisseur', compact('fournisseur'));
         //
     }
 
     /**
      * Update the specified resource in storage.
      */
+    use App\Models\Fournisseur; // Ensure you have imported your Fournisseur model at the top of your controller
+
     public function update(Request $request, string $id)
     {
-
+        // Validate incoming request data
+        $validatedData = $request->validate([
+            'nom' => 'required|string|max:255',
+            'matriculeFiscale' => 'required|string|max:255',
+            'raisonSociale' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'adresse' => 'required|string|max:255',
+            'phone' => 'required|string|max:255',
+            'formeJuridique' => 'required|string|in:SARL,SA,SASU',
+            'type' => 'required|string|in:personne physique,personne morale',
+        ]);
+    
+        // Find the fournisseur by ID
         $fournisseur = Fournisseur::findOrFail($id);
-        $fournisseur->name = $request->input('name');
+    
+        // Update fournisseur attributes based on validated data
+        $fournisseur->nom = $validatedData['nom'];
+        $fournisseur->matriculeFiscale = $validatedData['matriculeFiscale'];
+        $fournisseur->raisonSociale = $validatedData['raisonSociale'];
+        $fournisseur->email = $validatedData['email'];
+        $fournisseur->adresse = $validatedData['adresse'];
+        $fournisseur->phone = $validatedData['phone'];
+        $fournisseur->formeJuridique = $validatedData['formeJuridique'];
+        $fournisseur->type = $validatedData['type'];
+    
+        // Save the updated fournisseur
         $fournisseur->save();
-
-        return redirect()->route('fournisseur.index');    }
+    
+        // Redirect back to the fournisseur list or wherever appropriate
+        return redirect()->route('admin.fournisseur.index');
+    }
+    
 
     /**
      * Remove the specified resource from storage.
@@ -100,22 +135,20 @@ class FournisseurResourceController extends Controller
         $fournisseur = Fournisseur::findOrFail($id);
         $fournisseur->delete();
 
-        return redirect()->route('fournisseur.index');
+        return redirect()->route('admin.fournisseur');
         //
     }
-    private function generate_code()
+    private function generate_code($tableName)
     {
-        $parametre = Parametre::first(); // Adjust as per your application logic to fetch the appropriate parametre
-
+        $parametre = Parametre::where('table', $tableName)->first();
         // Generate a unique ID using prefixe and compteur
-        $id = $parametre->prefixe . '-' . $parametre->compteur;
-    
+        $code = $parametre->prefixe . $parametre->separateur . str_pad($parametre->compteur, $parametre->taille, '0', STR_PAD_LEFT);    
         // Increment compteur for the next use, assuming it's a sequential counter
         $parametre->compteur++;
     
         // Save the updated parametre
         $parametre->save();
     
-        return $id;
+        return $code;
     }
 }

@@ -31,9 +31,9 @@ class AdminController extends Controller
         return view('admin.login');
     }
     public function login_submit(Request $request){
-        echo'jessem sabuya';
+        echo'jessem sabiya';
 
-       // dd($request->all());
+       //dd($request->all());
         $request->validate([
             'email'=>'required|email',
             'password'=>'required|min:8',

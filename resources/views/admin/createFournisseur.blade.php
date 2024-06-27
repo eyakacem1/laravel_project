@@ -23,6 +23,7 @@
     <form action="{{ route('admin.fournisseur.store') }}" method="POST">        @csrf
         <div class="form-group">
             <label for="nom">Nom</label>
+            <input type="hidden" name="table_name" value="fournisseur">
             <input type="text" class="form-control" id="nom" name="nom" value="{{ old('nom') }}" required>
         </div>
         

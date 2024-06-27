@@ -12,7 +12,7 @@ class fournisseur extends Model
        'adresse',
        'email',
        'formeJuridique',
-       'id',
+       'code',
        'matriculeFiscale',
        'nom',
        'phone',

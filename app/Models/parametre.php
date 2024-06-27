@@ -11,7 +11,6 @@ class parametre extends Model
 
     protected $fillable = [
        'compteur',
-       'id',
        'prefixe',
        'separateur',
        'table',
