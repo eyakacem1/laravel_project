@@ -15,6 +15,7 @@ class Fournisseur extends Model
        'code',
        'matriculeFiscale',
        'nom',
+       'ville',
        'phone',
        'raisonSociale',
        'type'

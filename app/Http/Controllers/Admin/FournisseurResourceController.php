@@ -4,9 +4,13 @@ namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Fournisseur;
+use App\Models\Villes;
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Parametre;
+use App\Models\FormeJuridique;
+
 
 
 class FournisseurResourceController extends Controller
@@ -17,6 +21,7 @@ class FournisseurResourceController extends Controller
     public function index()
     {
         $fournisseur = Fournisseur::all();
+        
         return view('admin.fournisseur', compact('fournisseur'));
 
         //
@@ -26,8 +31,10 @@ class FournisseurResourceController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        return view('admin.createFournisseur');
+    { $formeJuridiques = FormeJuridique::all();
+        $villes = Villes::all();
+        return view('admin.createFournisseur', compact('villes','formeJuridiques'));
+        //return view('admin.createFournisseur');
         //
     }
 
@@ -37,18 +44,17 @@ class FournisseurResourceController extends Controller
     public function store(Request $request)
     {
         // Validate the form inputs and store the validated data in $validatedData
-    $validatedData = $request->validate([
-        'table_name' => 'required|string',
-        'adresse' => 'required|string',
-        'email' => 'required|email',
-        'formeJuridique' => 'required|string',
-        'matriculeFiscale' => 'required|string',
-        'nom' => 'required|string',
-        'phone' => 'required|string',
-        'raisonSociale' => 'required|string',
-        'type' => 'required|string',
-    ]);
-
+        $validatedData = $request->validate([
+            'table_name' => 'required|string',
+            'adresse' => 'required|string',
+            'email' => 'required|email',
+            'formeJuridique' => $request->type == 'personne morale' ? 'required|string' : '',            'nom' => 'required|string',
+            'ville' => 'required|string',
+            'phone' => 'required|string',
+            'type' => 'required|string|in:personne physique,personne morale',
+            'matriculeFiscale' => $request->type == 'personne morale' ? 'required|string' : '',
+            'raisonSociale' => $request->type == 'personne morale' ? 'required|string' : '',
+        ]);
     // Fetch the table name from the validated data
     $tableName = $validatedData['table_name'];
     // Generate the code based on the table name

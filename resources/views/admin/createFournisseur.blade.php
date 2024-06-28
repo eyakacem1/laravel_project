@@ -5,6 +5,10 @@
     .container {
         margin-top: 15%;
     }
+
+    .hidden {
+        display: none;
+    }
 </style>
 
 <div class="container">
@@ -20,21 +24,14 @@
         </div>
     @endif
 
-    <form action="{{ route('admin.fournisseur.store') }}" method="POST">        @csrf
+    <form id="fournisseurForm" action="{{ route('admin.fournisseur.store') }}" method="POST">
+        @csrf
         <div class="form-group">
             <label for="nom">Nom</label>
             <input type="hidden" name="table_name" value="fournisseur">
             <input type="text" class="form-control" id="nom" name="nom" value="{{ old('nom') }}" required>
         </div>
         
-        <div class="form-group">
-            <label for="matriculeFiscale">Matricule Fiscale</label>
-            <input type="text" class="form-control" id="matriculeFiscale" name="matriculeFiscale" value="{{ old('matriculeFiscale') }}" required>
-        </div>
-        <div class="form-group">
-            <label for="raisonSociale">Raison Sociale</label>
-            <input type="text" class="form-control" id="raisonSociale" name="raisonSociale" value="{{ old('raisonSociale') }}" required>
-        </div>
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
@@ -48,28 +45,36 @@
             <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone') }}" required>
         </div>
 
-       
-
         <div class="form-group">
-            <label for="formeJuridique">Forme Juridique</label><br>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="formeJuridique_sarl" name="formeJuridique" value="SARL" {{ old('formeJuridique') == 'SARL' ? 'checked' : '' }}>
-                <label class="form-check-label" for="formeJuridique_sarl">SARL</label>
+            <label for="ville">Ville</label>
+            <select class="form-control" id="ville" name="ville" required>
+                <option value="">Sélectionner une ville</option>
+                @foreach($villes as $ville)
+                    <option value="{{ $ville->id }}" {{ old('ville') == $ville->id ? 'selected' : '' }}>{{ $ville->nom }}</option>
+                @endforeach
+            </select>
+        </div>
+
+        <div id="personneMoraleFields" class="hidden">
+            <div class="form-group">
+                <label for="matriculeFiscale">Matricule Fiscale</label>
+                <input type="text" class="form-control" id="matriculeFiscale" name="matriculeFiscale" value="{{ old('matriculeFiscale') }}">
             </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="formeJuridique_sa" name="formeJuridique" value="SA" {{ old('formeJuridique') == 'SA' ? 'checked' : '' }}>
-                <label class="form-check-label" for="formeJuridique_sa">SA</label>
+            <div class="form-group">
+                <label for="raisonSociale">Raison Sociale</label>
+                <input type="text" class="form-control" id="raisonSociale" name="raisonSociale" value="{{ old('raisonSociale') }}">
             </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="formeJuridique_sasu" name="formeJuridique" value="SASU" {{ old('formeJuridique') == 'SASU' ? 'checked' : '' }}>
-                <label class="form-check-label" for="formeJuridique_sasu">SASU</label>
-            </div>        </div>
-
-
-       
-
-       
-     
+            <div class="form-group">
+                <label for="formeJuridique">Forme Juridique</label>
+                <select class="form-control" id="formeJuridique" name="formeJuridique" required>
+                    <option value="">Sélectionner une forme juridique</option>
+                    @foreach($formeJuridiques as $id => $forme)
+                        <option value="{{ $id }}" {{ old('formeJuridique') == $id ? 'selected' : '' }}>{{ $forme }}</option>
+                    @endforeach
+                </select>
+                
+            </div>
+        </div>
 
         <div class="form-group">
             <label>Type</label><br>
@@ -86,4 +91,21 @@
         <button type="submit" class="btn btn-primary">Ajouter Fournisseur</button>
     </form>
 </div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const personneMoraleFields = document.getElementById('personneMoraleFields');
+        const typePhysiqueRadio = document.getElementById('type_physique');
+        const typeMoraleRadio = document.getElementById('type_morale');
+
+        function togglePersonneMoraleFields() {
+            personneMoraleFields.classList.toggle('hidden', !typeMoraleRadio.checked);
+        }
+
+        togglePersonneMoraleFields();
+
+        typePhysiqueRadio.addEventListener('change', togglePersonneMoraleFields);
+        typeMoraleRadio.addEventListener('change', togglePersonneMoraleFields);
+    });
+</script>
 @endsection

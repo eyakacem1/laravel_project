@@ -7,7 +7,7 @@
             <div class="card">
                 <div class="card-header">
                     <h3 class="card-title">liste des fournisseurs</h3>
-                    <a class="btn btn-primary" href="{{ route('admin.fournisseur.create') }}">Ajouter Étudiant</a>
+                    <a class="btn btn-primary" href="{{ route('admin.fournisseur.create') }}">Ajouter Fournisseur</a>
 
                 </div>
                 <div class="card-body table-responsive table-footer">
