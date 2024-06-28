@@ -11,7 +11,7 @@
 <body>
   
     @include('layout.header')
-    @include('layout.nav_header')
+    @include('layout.nav_header')   
     @include('layout.menu')
 
 

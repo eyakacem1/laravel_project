@@ -3,9 +3,9 @@
 @section('content')
 <div class="container">
     <h1>Edit Fournisseur</h1>
-    <form action="{{ route('admin.fournisseur.edit') }}" method="POST">
+    <form action="{{ route('admin.fournisseur.update', ['id' => $fournisseur->id]) }}" method="POST">
         @csrf
-        @method('PUT')
+        @method('put')
         <div class="form-group">
             <label for="nom">Nom</label>
             <input type="text" class="form-control" id="nom" name="nom" value="{{ $fournisseur->nom }}" required>

@@ -90,7 +90,6 @@ class FournisseurResourceController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    use App\Models\Fournisseur; // Ensure you have imported your Fournisseur model at the top of your controller
 
     public function update(Request $request, string $id)
     {
@@ -123,7 +122,7 @@ class FournisseurResourceController extends Controller
         $fournisseur->save();
     
         // Redirect back to the fournisseur list or wherever appropriate
-        return redirect()->route('admin.fournisseur.updateFournisseur');
+        return redirect()->route('admin.fournisseur');
     }
     
     /**

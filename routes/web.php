@@ -35,10 +35,10 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/fournisseur/create', [FournisseurResourceController::class, 'create'])->name('admin.fournisseur.create');
     Route::post('/fournisseur', [FournisseurResourceController::class, 'store'])->name('admin.fournisseur.store');
     Route::get('/fournisseur/{id}/edit', [FournisseurResourceController::class, 'edit'])->name('admin.fournisseur.edit');
-    Route::put('/fournisseur/{id}', [FournisseurResourceController::class, 'update'])->name('admin.fournisseur.update');
+    Route::put('/fournisseur/{id}', [FournisseurResourceController::class, 'update'])->name('admin.fournisseur.update');   
     Route::delete('/fournisseur/{id}', [FournisseurResourceController::class, 'destroy'])->name('admin.fournisseur.destroy');
     
-    Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin_dashboard');
+    Route::get('/AdminDashboard', [AdminController::class, 'dashboard'])->name('AdminDashboard');
     Route::get('/home', [HomeController::class, 'index'])->name('admin.home');
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
