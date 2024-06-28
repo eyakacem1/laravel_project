@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\admin;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
 use App\Models\Fournisseur;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use App\Models\Parametre;
 
@@ -74,7 +74,7 @@ class FournisseurResourceController extends Controller
      */
     public function show(string $id)
     {
-        return view('admin.fournisseur.show', compact('fournisseur'));
+        return view('admin.fournisseur', compact('fournisseur'));
         //
     }
 
@@ -107,7 +107,7 @@ class FournisseurResourceController extends Controller
         ]);
     
         // Find the fournisseur by ID
-        $fournisseur = Fournisseur::findOrFail($id);
+        $fournisseur = \App\Models\Fournisseur::findOrFail($id);
     
         // Update fournisseur attributes based on validated data
         $fournisseur->nom = $validatedData['nom'];
@@ -123,10 +123,9 @@ class FournisseurResourceController extends Controller
         $fournisseur->save();
     
         // Redirect back to the fournisseur list or wherever appropriate
-        return redirect()->route('admin.fournisseur.index');
+        return redirect()->route('admin.fournisseur.updateFournisseur');
     }
     
-
     /**
      * Remove the specified resource from storage.
      */

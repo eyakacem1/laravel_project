@@ -33,13 +33,13 @@ class AdminController extends Controller
     public function login_submit(Request $request){
         echo'jessem sabiya';
 
-       //dd($request->all());
+       dd($request->all());
         $request->validate([
             'email'=>'required|email',
             'password'=>'required|min:8',
         ]);
         $check=$request->all();
-        $data=[
+        $data=[ 
             'email'=>$check['email'],
             'password'=>$check['password'],
 
