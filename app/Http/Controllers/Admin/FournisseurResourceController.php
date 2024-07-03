@@ -44,7 +44,6 @@ class FournisseurResourceController extends Controller
     public function store(Request $request)
     {
         $validatedData = $request->validate([
-            'table_name' => 'required|string',
             'adresse' => 'required|string',
             'email' => 'required|email',
             'nom' => 'required|string',
@@ -56,8 +55,7 @@ class FournisseurResourceController extends Controller
 'formeJuridique' => $request->type == 'personne morale' ? 'required|string|exists:forme_juridiques,forme' : 'nullable|string',
         ]);
 
-        $tableName = $validatedData['table_name'];
-        $code = GeneralController::generateCode($tableName);
+        $code = GeneralController::generateCode('fournisseur');
         $fournisseur = new Fournisseur();
         $fournisseur->code = $code;
         $fournisseur->adresse = $validatedData['adresse'];

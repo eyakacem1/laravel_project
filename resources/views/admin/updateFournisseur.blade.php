@@ -25,6 +25,7 @@
     <form action="{{ route('admin.fournisseur.update', ['id' => $fournisseur->id]) }}" method="POST" id="editForm">
         @csrf
         @method('put')
+        <input type="hidden" name="type" value="{{ request('type', old('type')) }}">
 
         <div class="form-group">
             <label for="nom">Nom</label>
@@ -64,38 +65,38 @@
 
         <button type="submit" class="btn btn-primary">Update Fournisseur</button>
     </form>
-
-   
 </div>
 
 <script>
-    document.addEventListener('change', function(event) {
-        if (event.target.matches('input[name="type"]')) {
-            var selectedType = event.target.value;
-            var fournisseurId = {{ $fournisseur->id }};
+    document.addEventListener('DOMContentLoaded', function() {
+        document.querySelectorAll('input[name="type"]').forEach(function(radio) {
+            radio.addEventListener('change', toggleFields);
+        });
 
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'fournisseurDynamicFields/' + fournisseurId + '/' + selectedType, true);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                    document.getElementById('dynamic-fields').innerHTML = xhr.responseText;
-                    clearFieldsIfPhysique(selectedType);
-                }
-            };
-            xhr.send();
-        }
+        // Initial toggle to handle the pre-selected type
+        toggleFields();
     });
 
-    function clearFieldsIfPhysique(type) {
-        if (type === 'personne physique') {
-            document.querySelectorAll('#dynamic-fields input').forEach(function(input) {
-                input.value = '';
-            });
-            document.querySelectorAll('#dynamic-fields select').forEach(function(select) {
-                select.selectedIndex = 0;
-            });
+    function toggleFields() {
+        var selectedType = document.querySelector('input[name="type"]:checked').value;
+        var dynamicFields = document.getElementById('dynamic-fields');
+
+        if (selectedType === 'personne physique') {
+            dynamicFields.classList.add('hidden');
+            clearFields();
+        } else if (selectedType === 'personne morale') {
+            dynamicFields.classList.remove('hidden');
         }
     }
+
+    function clearFields() {
+        document.querySelectorAll('#dynamic-fields input').forEach(function(input) {
+            input.value = '';
+        });
+        document.querySelectorAll('#dynamic-fields select').forEach(function(select) {
+            select.selectedIndex = 0;
+        });
+    }
 </script>
+
 @endsection

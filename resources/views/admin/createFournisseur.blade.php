@@ -23,17 +23,7 @@
     <form id="fournisseurForm" action="{{ route('admin.fournisseur.store') }}" method="POST">
         @csrf
         <input type="hidden" name="type" value="{{ request('type', old('type')) }}">
-        <div class="form-group">
-            <label>Type</label><br>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="type_physique" name="type" value="personne physique" {{ request('type') == 'personne physique' ? 'checked' : '' }}>
-                <label class="form-check-label" for="type_physique">Personne Physique</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="type_morale" name="type" value="personne morale" {{ request('type') == 'personne morale' ? 'checked' : '' }}>
-                <label class="form-check-label" for="type_morale">Personne Morale</label>
-            </div>
-        </div>
+
         <div class="form-group">
             <label for="nom">Nom</label>
             <input type="text" class="form-control" id="nom" name="nom" value="{{ old('nom') }}" required>
@@ -59,40 +49,61 @@
                 @endforeach
             </select>
         </div>
-        <div id="dynamic-fields">
-            @include('admin.fournisseurDynamicFields', ['type' => request('type', old('type')), 'formeJuridiques' => $formeJuridiques])
+        <div class="form-group">
+            <label>Type</label><br>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="type_physique" name="type" value="personne physique" {{ request('type') == 'personne physique' ? 'checked' : '' }}>
+                <label class="form-check-label" for="type_physique">Personne Physique</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="type_morale" name="type" value="personne morale" {{ request('type') == 'personne morale' ? 'checked' : '' }}>
+                <label class="form-check-label" for="type_morale">Personne Morale</label>
+            </div>
+        </div>
+        <div class="form-group" id="matriculeGroup" style="display: none;">
+            <label for="matriculeFiscale">Matricule Fiscale</label>
+            <input type="text" class="form-control" id="matriculeFiscale" name="matriculeFiscale" value="{{ old('matriculeFiscale') }}">
+        </div>
+        <div class="form-group" id="raisonGroup" style="display: none;">
+            <label for="raisonSociale">Raison Sociale</label>
+            <input type="text" class="form-control" id="raisonSociale" name="raisonSociale" value="{{ old('raisonSociale') }}">
+        </div>
+        <div class="form-group" id="formeGroup" style="display: none;">
+            <label for="formeJuridique">Forme Juridique</label>
+            <select class="form-control" id="formeJuridique" name="formeJuridique">
+                <option value="">Sélectionner une forme juridique</option>
+                @foreach($formeJuridiques as $formeJuridique)
+                    <option value="{{ $formeJuridique->forme }}" {{ old('formeJuridique') == $formeJuridique->forme ? 'selected' : '' }}>
+                        {{ $formeJuridique->forme }}
+                    </option>
+                @endforeach
+            </select>
         </div>
         <button type="submit" class="btn btn-primary">Ajouter Fournisseur</button>
     </form>
 </div>
+   <script>
+    document.querySelectorAll('input[name="type"]').forEach((elem) => {
+        elem.addEventListener('change', function() {
+            const matriculeGroup = document.getElementById('matriculeGroup');
+            const raisonGroup = document.getElementById('raisonGroup');
+            const formeGroup = document.getElementById('formeGroup');
 
-<script>
-    document.addEventListener('change', function(event) {
-        if (event.target.matches('input[name="type"]')) {
-            var selectedType = event.target.value;
-
-            var xhr = new XMLHttpRequest();
-            xhr.open('GET', 'fournisseurDynamicFields/' + selectedType, true);
-            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-            xhr.onreadystatechange = function () {
-                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                    document.getElementById('dynamic-fields').innerHTML = xhr.responseText;
-                    clearFieldsIfPhysique(selectedType);
-                }
-            };
-            xhr.send();
-        }
+            if (this.value === 'personne morale') {
+                matriculeGroup.style.display = 'block';
+                raisonGroup.style.display = 'block';
+                formeGroup.style.display = 'block';
+            } else {
+                matriculeGroup.style.display = 'none';
+                raisonGroup.style.display = 'none';
+                formeGroup.style.display = 'none';
+            }
+        });
     });
 
-    function clearFieldsIfPhysique(type) {
-        if (type === 'personne physique') {
-            document.querySelectorAll('#dynamic-fields input').forEach(function(input) {
-                input.value = '';
-            });
-            document.querySelectorAll('#dynamic-fields select').forEach(function(select) {
-                select.selectedIndex = 0;
-            });
-        }
-    }
+    // Trigger change event on page load to handle pre-selected type
+    document.querySelector('input[name="type"]:checked').dispatchEvent(new Event('change'));
+
 </script>
+
 @endsection

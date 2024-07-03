@@ -1,4 +1,4 @@
-@if ($type === 'personne morale')
+<div class="personne-morale-fields">
     <div class="form-group">
         <label for="matriculeFiscale">Matricule Fiscale</label>
         <input type="text" class="form-control" id="matriculeFiscale" name="matriculeFiscale" value="{{ $fournisseur->matriculeFiscale }}">
@@ -18,4 +18,4 @@
             @endforeach
         </select>
     </div>
-@endif
+</div>
