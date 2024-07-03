@@ -37,6 +37,9 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::get('/fournisseur/{id}/edit', [FournisseurResourceController::class, 'edit'])->name('admin.fournisseur.edit');
     Route::put('/fournisseur/{id}', [FournisseurResourceController::class, 'update'])->name('admin.fournisseur.update');   
     Route::delete('/fournisseur/{id}', [FournisseurResourceController::class, 'destroy'])->name('admin.fournisseur.destroy');
+    Route::get('fournisseurDynamicFields/{type}', [FournisseurResourceController::class, 'fournisseurDynamicFields'])
+    ->name('admin.fournisseur.dynamicFields');
+
     
     Route::get('/AdminDashboard', [AdminController::class, 'dashboard'])->name('AdminDashboard');
     Route::get('/home', [HomeController::class, 'index'])->name('admin.home');

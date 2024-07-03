@@ -43,35 +43,41 @@ class FournisseurResourceController extends Controller
      */
     public function store(Request $request)
     {
-        // Validate the form inputs and store the validated data in $validatedData
         $validatedData = $request->validate([
             'table_name' => 'required|string',
             'adresse' => 'required|string',
             'email' => 'required|email',
-            'formeJuridique' => $request->type == 'personne morale' ? 'required|string' : '',            'nom' => 'required|string',
+            'nom' => 'required|string',
             'ville' => 'required|string',
             'phone' => 'required|string',
             'type' => 'required|string|in:personne physique,personne morale',
-            'matriculeFiscale' => $request->type == 'personne morale' ? 'required|string' : '',
-            'raisonSociale' => $request->type == 'personne morale' ? 'required|string' : '',
+            'matriculeFiscale' => $request->type == 'personne morale' ? 'required|string' : 'nullable|string',
+            'raisonSociale' => $request->type == 'personne morale' ? 'required|string' : 'nullable|string',
+'formeJuridique' => $request->type == 'personne morale' ? 'required|string|exists:forme_juridiques,forme' : 'nullable|string',
         ]);
-    // Fetch the table name from the validated data
-    $tableName = $validatedData['table_name'];
-    // Generate the code based on the table name
-    $code = $this->generate_code($tableName);
 
-    // Create a new Fournisseur instance and fill it with the validated data
-    $fournisseur = new Fournisseur();
-    $fournisseur->code = $code;
-    $fournisseur->adresse = $validatedData['adresse'];
-    $fournisseur->email = $validatedData['email'];
-    $fournisseur->formeJuridique = $validatedData['formeJuridique'];
-    $fournisseur->matriculeFiscale = $validatedData['matriculeFiscale'];
-    $fournisseur->nom = $validatedData['nom'];
-    $fournisseur->phone = $validatedData['phone'];
-    $fournisseur->raisonSociale = $validatedData['raisonSociale'];
-    $fournisseur->type = $validatedData['type'];
-    $fournisseur->save();
+        $tableName = $validatedData['table_name'];
+        $code = GeneralController::generateCode($tableName);
+        $fournisseur = new Fournisseur();
+        $fournisseur->code = $code;
+        $fournisseur->adresse = $validatedData['adresse'];
+        $fournisseur->email = $validatedData['email'];
+        $fournisseur->nom = $validatedData['nom'];
+        $fournisseur->phone = $validatedData['phone'];
+        $fournisseur->ville = $validatedData['ville'];
+        $fournisseur->type = $validatedData['type'];
+
+        if ($request->type == 'personne morale') {
+            $fournisseur->matriculeFiscale = $validatedData['matriculeFiscale'];
+            $fournisseur->raisonSociale = $validatedData['raisonSociale'];
+            $fournisseur->formeJuridique = $validatedData['formeJuridique'];
+        }
+        
+        
+        
+        
+        
+        $fournisseur->save();
 
         return redirect()->route('admin.fournisseur.create')->with('success', 'Fournisseur ajouté avec succès.');
     }
@@ -88,8 +94,11 @@ class FournisseurResourceController extends Controller
      * Show the form for editing the specified resource.
      */
     public function edit(string $id)
+    
     {  $fournisseur = Fournisseur::findOrFail($id);
-        return view('admin.updateFournisseur', compact('fournisseur'));
+        $formeJuridiques = FormeJuridique::all();
+        $type = $fournisseur->type;
+        return view('admin.updateFournisseur', compact('type','fournisseur','formeJuridiques'));
         //
     }
 
@@ -142,17 +151,13 @@ class FournisseurResourceController extends Controller
         return redirect()->route('admin.fournisseur');
         //
     }
-    private function generate_code($tableName)
-    {
-        $parametre = Parametre::where('table', $tableName)->first();
-        // Generate a unique ID using prefixe and compteur
-        $code = $parametre->prefixe . $parametre->separateur . str_pad($parametre->compteur, $parametre->taille, '0', STR_PAD_LEFT);    
-        // Increment compteur for the next use, assuming it's a sequential counter
-        $parametre->compteur++;
-    
-        // Save the updated parametre
-        $parametre->save();
-    
-        return $code;
-    }
+    public function fournisseurDynamicFields($id, $type)
+{
+    $fournisseur = Fournisseur::find($id);
+    $formeJuridiques = FormeJuridique::all();
+
+    return view('admin.fournisseurDynamicFields', compact('type', 'fournisseur', 'formeJuridiques'))->render();
+}
+
+   
 }

@@ -5,10 +5,6 @@
     .container {
         margin-top: 15%;
     }
-
-    .hidden {
-        display: none;
-    }
 </style>
 
 <div class="container">
@@ -26,12 +22,22 @@
 
     <form id="fournisseurForm" action="{{ route('admin.fournisseur.store') }}" method="POST">
         @csrf
+        <input type="hidden" name="type" value="{{ request('type', old('type')) }}">
+        <div class="form-group">
+            <label>Type</label><br>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="type_physique" name="type" value="personne physique" {{ request('type') == 'personne physique' ? 'checked' : '' }}>
+                <label class="form-check-label" for="type_physique">Personne Physique</label>
+            </div>
+            <div class="form-check form-check-inline">
+                <input class="form-check-input" type="radio" id="type_morale" name="type" value="personne morale" {{ request('type') == 'personne morale' ? 'checked' : '' }}>
+                <label class="form-check-label" for="type_morale">Personne Morale</label>
+            </div>
+        </div>
         <div class="form-group">
             <label for="nom">Nom</label>
-            <input type="hidden" name="table_name" value="fournisseur">
             <input type="text" class="form-control" id="nom" name="nom" value="{{ old('nom') }}" required>
         </div>
-        
         <div class="form-group">
             <label for="email">Email</label>
             <input type="email" class="form-control" id="email" name="email" value="{{ old('email') }}" required>
@@ -44,7 +50,6 @@
             <label for="phone">Téléphone</label>
             <input type="text" class="form-control" id="phone" name="phone" value="{{ old('phone') }}" required>
         </div>
-
         <div class="form-group">
             <label for="ville">Ville</label>
             <select class="form-control" id="ville" name="ville" required>
@@ -54,58 +59,40 @@
                 @endforeach
             </select>
         </div>
-
-        <div id="personneMoraleFields" class="hidden">
-            <div class="form-group">
-                <label for="matriculeFiscale">Matricule Fiscale</label>
-                <input type="text" class="form-control" id="matriculeFiscale" name="matriculeFiscale" value="{{ old('matriculeFiscale') }}">
-            </div>
-            <div class="form-group">
-                <label for="raisonSociale">Raison Sociale</label>
-                <input type="text" class="form-control" id="raisonSociale" name="raisonSociale" value="{{ old('raisonSociale') }}">
-            </div>
-            <div class="form-group">
-                <label for="formeJuridique">Forme Juridique</label>
-                <select class="form-control" id="formeJuridique" name="formeJuridique" required>
-                    <option value="">Sélectionner une forme juridique</option>
-                    @foreach($formeJuridiques as $id => $forme)
-                        <option value="{{ $id }}" {{ old('formeJuridique') == $id ? 'selected' : '' }}>{{ $forme }}</option>
-                    @endforeach
-                </select>
-                
-            </div>
+        <div id="dynamic-fields">
+            @include('admin.fournisseurDynamicFields', ['type' => request('type', old('type')), 'formeJuridiques' => $formeJuridiques])
         </div>
-
-        <div class="form-group">
-            <label>Type</label><br>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="type_physique" name="type" value="personne physique" {{ old('type') == 'personne physique' ? 'checked' : '' }}>
-                <label class="form-check-label" for="type_physique">Personne Physique</label>
-            </div>
-            <div class="form-check form-check-inline">
-                <input class="form-check-input" type="radio" id="type_morale" name="type" value="personne morale" {{ old('type') == 'personne morale' ? 'checked' : '' }}>
-                <label class="form-check-label" for="type_morale">Personne Morale</label>
-            </div>
-        </div>
-        
         <button type="submit" class="btn btn-primary">Ajouter Fournisseur</button>
     </form>
 </div>
 
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        const personneMoraleFields = document.getElementById('personneMoraleFields');
-        const typePhysiqueRadio = document.getElementById('type_physique');
-        const typeMoraleRadio = document.getElementById('type_morale');
+    document.addEventListener('change', function(event) {
+        if (event.target.matches('input[name="type"]')) {
+            var selectedType = event.target.value;
 
-        function togglePersonneMoraleFields() {
-            personneMoraleFields.classList.toggle('hidden', !typeMoraleRadio.checked);
+            var xhr = new XMLHttpRequest();
+            xhr.open('GET', 'fournisseurDynamicFields/' + selectedType, true);
+            xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    document.getElementById('dynamic-fields').innerHTML = xhr.responseText;
+                    clearFieldsIfPhysique(selectedType);
+                }
+            };
+            xhr.send();
         }
-
-        togglePersonneMoraleFields();
-
-        typePhysiqueRadio.addEventListener('change', togglePersonneMoraleFields);
-        typeMoraleRadio.addEventListener('change', togglePersonneMoraleFields);
     });
+
+    function clearFieldsIfPhysique(type) {
+        if (type === 'personne physique') {
+            document.querySelectorAll('#dynamic-fields input').forEach(function(input) {
+                input.value = '';
+            });
+            document.querySelectorAll('#dynamic-fields select').forEach(function(select) {
+                select.selectedIndex = 0;
+            });
+        }
+    }
 </script>
 @endsection
