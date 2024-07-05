@@ -42,10 +42,10 @@
         </div>
         <div class="form-group">
             <label for="ville">Ville</label>
-            <select class="form-control" id="ville" name="ville" required>
+            <select class="form-control" id="ville" name="ville" >
                 <option value="">Sélectionner une ville</option>
                 @foreach($villes as $ville)
-                    <option value="{{ $ville->id }}" {{ old('ville') == $ville->id ? 'selected' : '' }}>{{ $ville->nom }}</option>
+                    <option value="{{ $ville->id}}" {{ old('ville') == $ville->id ? 'selected' : '' }}>{{ $ville->nom }}</option>
                 @endforeach
             </select>
         </div>

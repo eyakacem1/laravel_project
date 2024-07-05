@@ -10,7 +10,7 @@ class FormeJuridique extends Model
 
     protected $table = 'forme_juridiques'; // Specify the correct table name
     protected $fillable = [
-       'adresse',
+       'forme',
        
 
     ];

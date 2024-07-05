@@ -2,9 +2,13 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Admin\AdminController;
+use App\Http\Controllers\Admin\VilleController;
+
 use App\Http\Controllers\Admin\FournisseurResourceController;
 use App\Http\Controllers\Web\WebLoginController;
 use App\Http\Controllers\Admin\ProductController;
+use App\Http\Controllers\Admin\FormeJuridiqueController;
+
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Auth;
@@ -39,6 +43,21 @@ Route::middleware('admin')->prefix('admin')->group(function () {
     Route::delete('/fournisseur/{id}', [FournisseurResourceController::class, 'destroy'])->name('admin.fournisseur.destroy');
     Route::get('fournisseurDynamicFields/{type}', [FournisseurResourceController::class, 'fournisseurDynamicFields'])
     ->name('admin.fournisseur.dynamicFields');
+
+    Route::get('/ville', [VilleController::class, 'index'])->name('admin.ville');
+    Route::get('/villes/create', [VilleController::class, 'create'])->name('admin.villes.create');
+    Route::post('/villes', [VilleController::class, 'store'])->name('admin.villes.store');
+    Route::get('/villes/{id}/edit', [VilleController::class, 'edit'])->name('admin.villes.edit');
+    Route::put('/villes/{id}', [VilleController::class, 'update'])->name('admin.villes.update');
+    Route::delete('/villes/{id}', [VilleController::class, 'destroy'])->name('admin.villes.destroy');
+    
+    Route::get('/formeJuridiques', [FormeJuridiqueController::class, 'index'])->name('admin.formeJuridiques');
+    Route::get('/formeJuridiques/create', [FormeJuridiqueController::class, 'create'])->name('admin.formeJuridiques.create');
+    Route::post('/formeJuridiques', [FormeJuridiqueController::class, 'store'])->name('admin.formeJuridiques.store');
+    Route::get('/formeJuridiques/{id}/edit', [FormeJuridiqueController::class, 'edit'])->name('admin.formeJuridiques.edit');
+    Route::put('/formeJuridiques/{id}', [FormeJuridiqueController::class, 'update'])->name('admin.formeJuridiques.update');
+    Route::delete('/formeJuridiques/{id}', [FormeJuridiqueController::class, 'destroy'])->name('admin.formeJuridiques.destroy');
+
 
     
     Route::get('/AdminDashboard', [AdminController::class, 'dashboard'])->name('AdminDashboard');

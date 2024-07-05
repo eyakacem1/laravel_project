@@ -1,4 +1,4 @@
-<div class="personne-morale-fields">
+<div class="personne-morale-fields" style="display: none;">
     <div class="form-group">
         <label for="matriculeFiscale">Matricule Fiscale</label>
         <input type="text" class="form-control" id="matriculeFiscale" name="matriculeFiscale" value="{{ $fournisseur->matriculeFiscale }}">

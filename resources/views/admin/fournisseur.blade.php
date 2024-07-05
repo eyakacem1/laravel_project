@@ -23,6 +23,8 @@
                                     <th scope="col">Adresse</th>
                                     <th scope="col">Email</th>
                                     <th scope="col">Phone</th>
+                                    <th scope="col">Ville</th>
+
                                     <th scope="col">Forme Juridique</th>
                                     <th scope="col">Type</th>
                                     <th scope="col">Action</th>
@@ -41,6 +43,8 @@
                                         <td>{{ $f->adresse }}</td>
                                         <td>{{ $f->email }}</td>
                                         <td>{{ $f->phone }}</td>
+                                        <td>{{ $f->ville }}</td>
+
                                         <td>{{ $f->formeJuridique }}</td>
 
                                         <td>{{ $f->type }}</td>
@@ -67,5 +71,4 @@
             </div>
         </div>
     </div>
-</div>
 @endsection
